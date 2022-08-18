@@ -2,7 +2,7 @@ class LudoGame:
 
     # Constructor Declaration of Class LudoGame
     def __init__(self):
-       
+       self.__players = []
 
     # Gets all players playing the game
     def get_players(self):
@@ -10,21 +10,49 @@ class LudoGame:
 
     # Gets player by their current position
     def get_player_by_position(self, position):
-        
+        for player in self.__players:
+            #Try using property to set the getter for player
+            if player == position:
+                return player 
+
     # Moves player token
     def move_token(self, player, token, steps):
         
     # Moves a specific player to play the game
     def play_game(self, player, turns):
+        for gamer in player:
+            if gamer >= "A" and gamer <= "D":
+                self.__players.append(Player(gamer))
+            else:
+                raise ValueError("Please input a letter A to D")
+        for roll in turns:
+            gamer_temp = self.get_player_by_position(roll[0])
+            steps = roll[1]
         # Checks whose player turn to move
-        
-
+    
 
 class Player:
 
     # initial method or the constructor
-    def __init__(self, position, start, end, stacked):
-        
+    def __init__(self, position):
+        self.__position = position
+        self.__stacked = False
+        self.__token_p = Token('p')
+        self.__token_q = Token('q')
+
+        #see if conditional works in __init__
+        if self.__position == 'A':
+            self.__start = 1 
+            self.__end = 50
+        elif self.__position == 'B':
+            self.__start = 15
+            self.__end = 8
+        elif self.__position == 'C':
+            self.__start = 29
+            self.__end = 22
+        elif self.__position == 'D':
+            self.__start = 43
+            self.__end = 36
 
     # gets a position of a player
     def get_position(self):
@@ -54,10 +82,8 @@ class Player:
 class Token:
     # initial method or the construction of the class Token
     def __init__(self, name):
-        self._board = Board()
         self._player_name = name
         self._step_count = -1
-        self._current_space = "R"
 
     # gets the number of next steps to go
     def get_step_count(self):
@@ -65,9 +91,6 @@ class Token:
 
     # Moves a player to the next step
     def move(self, steps):
-        self._step_count += steps
-        if self._step_count > 57:
-            self._step_count = 57 - (self._step_count - 57)
 
     @property
     def current_space(self):
