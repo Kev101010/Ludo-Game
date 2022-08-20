@@ -46,7 +46,7 @@ class LudoGame:
 
     def farther_token(self, player):
         temp_player = self.get_player_by_position(player)
-        if temp_player.get_token_p_step_count < temp_player.get_token_q_step_count():
+        if temp_player.get_token_p_step_count() < temp_player.get_token_q_step_count():
             return 'p'
         else:
             return 'q'
@@ -68,9 +68,74 @@ class LudoGame:
                 self.move_token(player, self.home_base(player), 1)
             #remember to implement reroll feature later 
             else:
-                self.move_token(player, self.farther_token(player), 6)
+                if self.get_player_by_position(player).get_stacked():
+                    self.move_token(player, 'p', 6)
+                    self.move_token(player, 'q', 6)
+                    self.token_on_token(player, 'p')
+                else:
+                    temp_token = self.farther_token(player)
+                    self.move_token(player, temp_token, 6)
+                    self.token_on_token(player, temp_token)
         else:
-            self.move_token(player, self.farther_inplay_token(player), roll)
+            if self.get_player_by_position(player).get_stacked():
+                self.move_token(player, 'p', roll)
+                self.move_token(player, 'q', roll)
+                self.token_on_token(player, 'p')
+            else:
+                temp_token = self.farther_inplay_token(player)
+                self.move_token(player, temp_token, roll)
+                self.token_on_token(player, temp_token)
+
+    #Stack soft reset helper function
+    def token_stack_reset(self, player):
+        temp_player = self.get_player_by_position(player)
+        temp_player.toggle_stacked()
+        #resets token back to home base and toggles stacked
+        self.move_token(player, 'p', -1 * temp_player.get_token_p_step_count())
+        self.move_token(player, 'q', -1 * temp_player.get_token_q_step_count())
+
+    #Checks if player has landed on another token
+    def token_on_token(self, player, token):
+        temp_player = self.get_player_by_position(player)
+        #print('token:')
+        #print(token)
+        if token == 'p':
+            temp_space = temp_player.get_space_name(temp_player.get_token_p_step_count())
+            #Only checks for stacking on viable spots
+            if temp_space != 'R' and temp_space != 'H' and temp_space != 'E':
+                print('viable')
+                #Toggles stacked if a token lands on the same spot as another token
+                if temp_space == temp_player.get_space_name(temp_player.get_token_q_step_count()) and temp_player.get_stacked() != True:
+                    temp_player.toggle_stacked()
+        
+                #Check every players token to see if token argument is on the same spot 
+                for gamer in self.__players:
+                    if temp_player != gamer:
+                        if temp_space == gamer.get_space_name(gamer.get_token_p_step_count()):
+                            if gamer.get_stacked():
+                                self.token_stack_reset(gamer.get_position())
+                            else:
+                                self.move_token(gamer.get_position(), 'p', -1 * gamer.get_token_p_step_count())
+                        elif temp_space == gamer.get_space_name(gamer.get_token_q_step_count()):
+                            self.move_token(gamer.get_position(), 'q', -1 * gamer.get_token_p_step_count())
+        else:
+            temp_space = temp_player.get_space_name(temp_player.get_token_q_step_count())
+            
+            #Only checks for stacking on viable spots
+            if temp_space != 'R' and temp_space != 'H' and temp_space != 'E':
+
+                if temp_space == temp_player.get_space_name(temp_player.get_token_p_step_count()) and temp_player.get_stacked() != True: 
+                    temp_player.toggle_stacked()
+            
+                for gamer in self.__players:
+                    if temp_player != gamer:
+                        if temp_space == gamer.get_space_name(gamer.get_token_p_step_count()):
+                            if gamer.get_stacked():
+                                self.token_stack_reset(gamer.get_position())
+                            else:
+                                self.move_token(gamer.get_position(), 'p', -1 * gamer.get_token_p_step_count())
+                        elif temp_space == gamer.get_space_name(gamer.get_token_q_step_count()):
+                            self.move_token(gamer.get_position(), 'q', -1 * gamer.get_token_p_step_count())
     
     # Moves a specific player to play the game
     def play_game(self, player, turns):
@@ -193,8 +258,8 @@ class Token:
 
 # =============================== Skeleton Code ============================================
 
-players = ['A','B','C','D']
-turns = [('A', 6),('A', 1),('B', 6),('B', 2),('C', 6),('C', 3),('D', 6),('D', 4)]
+players = ['A','C']
+turns = [('A', 6),('A', 4),('A', 4),('A', 4),('A', 5),('A', 6),('A', 4),('A', 6),('A', 4),('A', 6),('A', 6),('A', 6),('A', 4),('A', 6),('A', 6),('C', 6),('C', 4)]
 
 # Object instantiation
 game = LudoGame()
