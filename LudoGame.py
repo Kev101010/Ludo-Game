@@ -70,12 +70,11 @@ class LudoGame:
 class Player:
 
     # initial method or the constructor
-    def __init__(self, position, start, end, stacked):
+    def __init__(self, position, start, end):
         self._board = Board()
         self.start = start
         self.end = end
         self._position = position
-        self._stacked = stacked 
         self._token_p = Token('p')
         self._token_q = Token('q')
 
@@ -168,8 +167,8 @@ class Board:
         return self._spaces
 
 
-players = ['A','B']
-turns = [('B', 6),('B', 4),('B', 5),('B', 4),('B', 4),('B', 3),('B', 4),('B', 5),('B', 4),('B', 4),('B', 5),('B', 4),('B', 1),('B', 4),('B', 5),('B', 5),('B', 5)]
+players = ['A','B','C','D']
+turns = [('A', 6),('A', 1),('B', 6),('B', 2),('C', 6),('C', 3),('D', 6),('D', 4)]
 
 
 # Object instantiation
